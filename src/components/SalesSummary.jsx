@@ -1,3 +1,4 @@
+// src/components/SalesSummary.jsx
 import { useState, useEffect } from 'react'
 import orderService from '../services/OrderService'
 
@@ -34,7 +35,8 @@ const SalesSummary = ({ onClose }) => {
 
   const calculateAverageOrderValue = () => {
     if (!summary || summary.totalOrders === 0) return 0
-    return summary.totalRevenue / summary.totalOrders
+    const revenue = parseFloat(summary.totalRevenue) || 0
+    return revenue / summary.totalOrders
   }
 
   const formatCurrency = (amount) => {
@@ -57,8 +59,9 @@ const SalesSummary = ({ onClose }) => {
 
   const getRevenueIcon = () => {
     if (!summary) return '📊'
-    if (summary.totalRevenue > 500000) return '🚀'
-    if (summary.totalRevenue > 200000) return '📈'
+    const revenue = parseFloat(summary.totalRevenue) || 0
+    if (revenue > 500000) return '🚀'
+    if (revenue > 200000) return '📈'
     return '💰'
   }
 
@@ -130,7 +133,7 @@ const SalesSummary = ({ onClose }) => {
                 <div className="bg-gradient-to-br from-green-900 to-green-800 rounded-lg p-6 text-center">
                   <div className="text-4xl mb-2">{getRevenueIcon()}</div>
                   <div className="text-3xl font-bold text-green-400 mb-2">
-                    {formatCurrency(summary.totalRevenue)}
+                    {formatCurrency(parseFloat(summary.totalRevenue) || 0)}
                   </div>
                   <div className="text-sm opacity-80">Ingresos Totales</div>
                 </div>
@@ -171,7 +174,7 @@ const SalesSummary = ({ onClose }) => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm opacity-80">Ingresos por Hora:</span>
                       <span className="font-medium">
-                        {formatCurrency(summary.totalRevenue / 12)}
+                        {formatCurrency((parseFloat(summary.totalRevenue) || 0) / 12)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -200,16 +203,16 @@ const SalesSummary = ({ onClose }) => {
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm opacity-80">Meta de Ingresos: $300,000</span>
                         <span className="text-sm font-medium">
-                          {((summary.totalRevenue / 300000) * 100).toFixed(1)}%
+                          {(((parseFloat(summary.totalRevenue) || 0) / 300000) * 100).toFixed(1)}%
                         </span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div 
                           className={`h-2 rounded-full ${
-                            summary.totalRevenue >= 300000 ? 'bg-green-500' : 'bg-orange-500'
+                            (parseFloat(summary.totalRevenue) || 0) >= 300000 ? 'bg-green-500' : 'bg-orange-500'
                           }`}
                           style={{
-                            width: `${Math.min((summary.totalRevenue / 300000) * 100, 100)}%`
+                            width: `${Math.min(((parseFloat(summary.totalRevenue) || 0) / 300000) * 100, 100)}%`
                           }}
                         ></div>
                       </div>
@@ -245,7 +248,7 @@ const SalesSummary = ({ onClose }) => {
                   {summary.totalOrders === 0 ? (
                     "No se han procesado órdenes en esta fecha. Verifique que la fecha seleccionada sea correcta."
                   ) : (
-                    `Se procesaron ${summary.totalOrders} órdenes generando un total de ${formatCurrency(summary.totalRevenue)} en ingresos. 
+                    `Se procesaron ${summary.totalOrders} órdenes generando un total de ${formatCurrency(parseFloat(summary.totalRevenue) || 0)} en ingresos. 
                     El valor promedio por orden fue de ${formatCurrency(calculateAverageOrderValue())}.`
                   )}
                 </p>
