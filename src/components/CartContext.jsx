@@ -1,4 +1,3 @@
-// CartContext.jsx - React Context for cart state management
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import cartService from '../services/CartService';
 

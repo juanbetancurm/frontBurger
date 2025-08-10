@@ -380,3 +380,311 @@ h3 {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+
+/* 
+ * ADD THESE STYLES TO YOUR EXISTING src/index.css FILE
+ * These are ADDITIONAL styles for the new POS components
+ */
+
+/* Enhanced spinner animation */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(249, 115, 22, 0.3);
+  border-top: 4px solid #F97316;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal backdrop animation */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Enhanced button styles */
+.btn {
+  @apply bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded transition-all duration-200;
+  @apply border border-orange-600 hover:border-orange-700;
+  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50;
+}
+
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+  @apply bg-gray-600 border-gray-600 hover:bg-gray-600 hover:border-gray-600;
+}
+
+.btn-secondary {
+  @apply bg-transparent hover:bg-gray-700 text-gray-300 hover:text-white font-medium py-2 px-4 rounded transition-all duration-200;
+  @apply border border-gray-600 hover:border-gray-500;
+  @apply focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50;
+}
+
+.btn-secondary:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Table styles */
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table-container table {
+  @apply w-full text-left;
+}
+
+.table-container th {
+  @apply bg-gray-700 text-gray-300 font-medium text-sm px-4 py-3;
+  @apply border-b border-gray-600;
+}
+
+.table-container td {
+  @apply px-4 py-3 text-sm border-b border-gray-700;
+}
+
+.table-container tr:hover {
+  @apply bg-gray-800 bg-opacity-50;
+}
+
+/* Card styles */
+.card {
+  @apply bg-gray-800 bg-opacity-50 rounded-lg border border-gray-600 p-6;
+}
+
+.card-header {
+  @apply border-b border-gray-600 pb-4 mb-4;
+}
+
+.card-title {
+  @apply text-lg font-bold text-white;
+}
+
+.card-subtitle {
+  @apply text-sm text-gray-400 mt-1;
+}
+
+/* Stats card styles */
+.stats-card {
+  @apply bg-gradient-to-br rounded-lg p-6 text-center;
+  @apply transform transition-transform duration-200 hover:scale-105;
+}
+
+.stats-value {
+  @apply text-3xl font-bold mb-2;
+}
+
+.stats-label {
+  @apply text-sm opacity-80;
+}
+
+/* Progress bar styles */
+.progress-bar {
+  @apply w-full bg-gray-700 rounded-full h-2;
+}
+
+.progress-fill {
+  @apply h-2 rounded-full transition-all duration-500 ease-out;
+}
+
+/* Stock status indicators */
+.stock-high {
+  @apply text-green-400;
+}
+
+.stock-medium {
+  @apply text-yellow-400;
+}
+
+.stock-low {
+  @apply text-red-400;
+}
+
+.stock-out {
+  @apply text-red-500;
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-gray-700 rounded;
+}
+
+.skeleton-text {
+  @apply h-4 bg-gray-700 rounded;
+}
+
+.skeleton-avatar {
+  @apply w-10 h-10 bg-gray-700 rounded-full;
+}
+
+/* Form enhancements */
+.form-group {
+  @apply mb-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-300 mb-2;
+}
+
+.form-input {
+  @apply w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white;
+  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500;
+  @apply transition-colors duration-200;
+}
+
+.form-input:disabled {
+  @apply opacity-50 cursor-not-allowed bg-gray-900;
+}
+
+.form-error {
+  @apply text-red-400 text-sm mt-1;
+}
+
+.form-help {
+  @apply text-gray-400 text-xs mt-1;
+}
+
+/* Search and filter styles */
+.search-container {
+  @apply relative;
+}
+
+.search-input {
+  @apply form-input pl-10;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
+}
+
+/* Badge styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-success {
+  @apply bg-green-900 text-green-200;
+}
+
+.badge-warning {
+  @apply bg-yellow-900 text-yellow-200;
+}
+
+.badge-danger {
+  @apply bg-red-900 text-red-200;
+}
+
+.badge-info {
+  @apply bg-blue-900 text-blue-200;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    @apply hidden;
+  }
+  
+  .mobile-stack {
+    @apply flex-col;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+}
+
+/* Custom scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4B5563 #1F2937;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1F2937;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4B5563;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bounce-in {
+  animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Focus states for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+}

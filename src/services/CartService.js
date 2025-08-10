@@ -1,4 +1,3 @@
-// src/services/CartService.js
 class CartService {
     constructor() {
         // Use port 8091 for cart service, not 8090

@@ -1,7 +1,10 @@
+// src/components/POS.jsx - WITHOUT NOTIFICATIONS
 import { useState, useEffect } from 'react'
 import ProductGrid from './ProductGrid'
 import Cart from './Cart'
 import Header from './Header'
+import ProductAvailability from './ProductAvailability'
+import SalesSummary from './SalesSummary'
 import axios from 'axios'
 
 const POS = ({ user, onLogout }) => {
@@ -12,6 +15,11 @@ const POS = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(null)
+  
+  // New state for modal management
+  const [showAvailability, setShowAvailability] = useState(false)
+  const [showSalesSummary, setShowSalesSummary] = useState(false)
+  const [availabilityRefreshTrigger, setAvailabilityRefreshTrigger] = useState(0)
 
   useEffect(() => {
     loadInitialData()
@@ -34,6 +42,8 @@ const POS = ({ user, onLogout }) => {
 
       // Try to load existing cart
       await loadCart()
+      
+      console.log('Initial data loaded successfully')
     } catch (error) {
       console.error('Error loading initial data:', error)
       setError('Error al cargar los datos iniciales')
@@ -64,26 +74,27 @@ const POS = ({ user, onLogout }) => {
 
       const response = await axios.post('/cart/items', cartItem)
       setCart(response.data)
+      console.log('Item added to cart:', article.name)
     } catch (error) {
       console.error('Error adding to cart:', error)
       if (error.response?.status === 409) {
         alert('Este artículo ya está en el carrito. Puedes cambiar la cantidad desde el carrito.')
       } else {
-        alert('Error al agregar el artículo al carrito')
+        alert('Error al agregar el producto al carrito')
       }
     }
   }
 
-  const updateCartItem = async (articleId, quantity) => {
+  const updateCartItem = async (articleId, newQuantity) => {
     try {
       const response = await axios.put('/cart/items', {
-        articleId: articleId,
-        quantity: quantity
+        articleId,
+        quantity: newQuantity
       })
       setCart(response.data)
     } catch (error) {
       console.error('Error updating cart item:', error)
-      alert('Error al actualizar el artículo')
+      alert('Error al actualizar la cantidad')
     }
   }
 
@@ -93,7 +104,7 @@ const POS = ({ user, onLogout }) => {
       setCart(response.data)
     } catch (error) {
       console.error('Error removing from cart:', error)
-      alert('Error al remover el artículo del carrito')
+      alert('Error al eliminar el artículo')
     }
   }
 
@@ -101,24 +112,44 @@ const POS = ({ user, onLogout }) => {
     try {
       await axios.delete('/cart')
       setCart({ items: [], total: 0 })
+      console.log('Cart cleared')
     } catch (error) {
       console.error('Error clearing cart:', error)
       alert('Error al limpiar el carrito')
     }
   }
 
+  // New function to handle successful purchase completion
+  const handlePurchaseComplete = async (orderResponse) => {
+    console.log('Purchase completed:', orderResponse)
+    
+    // Reload articles to get updated stock levels
+    try {
+      const articlesRes = await axios.get('/article/articles?page=0&size=50&sortBy=name&sortOrder=asc')
+      setArticles(articlesRes.data || [])
+      console.log('Articles reloaded after purchase')
+    } catch (error) {
+      console.error('Error reloading articles after purchase:', error)
+    }
+
+    // Trigger refresh for availability component if it's open
+    setAvailabilityRefreshTrigger(prev => prev + 1)
+  }
+
+  // Filter articles by selected category
   const filteredArticles = selectedCategory 
-    ? articles.filter(article => 
-        article.categories?.some(cat => cat.id === selectedCategory)
-      )
+    ? articles.filter(article => article.categoryId === selectedCategory)
     : articles
+
+  // Check if user has auxiliar role
+  const isAuxiliarUser = user?.role === 'ROLE_auxiliar' || user?.role === 'auxiliar'
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="spinner mb-4"></div>
-          <p>Cargando productos...</p>
+          <div className="spinner mx-auto mb-4"></div>
+          <p>Cargando sistema POS...</p>
         </div>
       </div>
     )
@@ -126,9 +157,9 @@ const POS = ({ user, onLogout }) => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">{error}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center text-red-400">
+          <p className="mb-4">❌ {error}</p>
           <button onClick={loadInitialData} className="btn">
             Reintentar
           </button>
@@ -141,16 +172,39 @@ const POS = ({ user, onLogout }) => {
     <div className="min-h-screen flex flex-col">
       <Header 
         user={user} 
-        onLogout={onLogout}
-        cartItemCount={cart.items?.length || 0}
+        onLogout={onLogout} 
+        cartItemCount={cart?.items?.length || 0}
       />
-      
+
+      {/* Action Bar - Only show for auxiliar users */}
+      {isAuxiliarUser && (
+        <div className="bg-gray-800 border-b border-gray-600 p-4">
+          <div className="container flex gap-4 items-center">
+            <span className="text-sm opacity-70">Herramientas:</span>
+            <button
+              onClick={() => setShowAvailability(true)}
+              className="btn-secondary text-sm px-4 py-2"
+            >
+              📦 Ver Disponibilidad
+            </button>
+            <button
+              onClick={() => setShowSalesSummary(true)}
+              className="btn-secondary text-sm px-4 py-2"
+            >
+              📊 Resumen de Ventas
+            </button>
+            <div className="ml-auto text-xs opacity-50">
+              {articles.length} productos • {categories.length} categorías
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 flex">
         {/* Main content area */}
-        <div className="flex-1 p-4">
+        <div className="flex-1 flex flex-col">
           {/* Category filters */}
-          <div className="mb-6">
-            <h3 className="mb-4">Categorías</h3>
+          <div className="p-4 border-b border-gray-600">
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setSelectedCategory(null)}
@@ -183,9 +237,24 @@ const POS = ({ user, onLogout }) => {
             onUpdateQuantity={updateCartItem}
             onRemoveItem={removeFromCart}
             onClearCart={clearCart}
+            onPurchaseComplete={handlePurchaseComplete}
           />
         </div>
       </div>
+
+      {/* Modal Components */}
+      {showAvailability && (
+        <ProductAvailability
+          refreshTrigger={availabilityRefreshTrigger}
+          onClose={() => setShowAvailability(false)}
+        />
+      )}
+
+      {showSalesSummary && (
+        <SalesSummary
+          onClose={() => setShowSalesSummary(false)}
+        />
+      )}
     </div>
   )
 }
