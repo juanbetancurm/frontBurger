@@ -6,10 +6,8 @@ class CartService {
     }
 
     getAuthToken() {
-        // Check multiple possible token storage locations
-        return localStorage.getItem('authToken') || 
-               localStorage.getItem('token') || 
-               sessionStorage.getItem('token') || '';
+        // Use standardized 'accessToken' key
+        return localStorage.getItem('accessToken') || '';
     }
 
     getHeaders() {

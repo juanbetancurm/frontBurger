@@ -10,8 +10,8 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token')
+    // Check if user is already logged in - use consistent 'accessToken' key
+    const token = localStorage.getItem('accessToken')
     const userData = localStorage.getItem('user')
     
     if (token && userData) {
@@ -26,7 +26,7 @@ function App() {
         console.log('User restored from localStorage:', parsedUser.email)
       } catch (error) {
         console.error('Error parsing user data:', error)
-        localStorage.removeItem('token')
+        localStorage.removeItem('accessToken')
         localStorage.removeItem('user')
       }
     }
@@ -73,7 +73,7 @@ function App() {
 
   const handleLogin = (userData, token) => {
     try {
-      localStorage.setItem('token', token)
+      localStorage.setItem('accessToken', token)
       localStorage.setItem('user', JSON.stringify(userData))
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setUser(userData)
@@ -88,7 +88,7 @@ function App() {
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem('token')
+      localStorage.removeItem('accessToken')
       localStorage.removeItem('user')
       delete axios.defaults.headers.common['Authorization']
       setUser(null)
